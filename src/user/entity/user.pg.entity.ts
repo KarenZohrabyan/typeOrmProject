@@ -1,6 +1,8 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude } from "class-transformer";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({name: 'users'})
+@Unique(['email'])
 export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     public id: number;
@@ -9,5 +11,18 @@ export class UserEntity extends BaseEntity {
     public name: string;
 
     @Column({type: 'varchar'})
-    public password: string
+    public email: string;
+ 
+    @Column({type: 'varchar'})
+    @Exclude()
+    public password: string;
+
+    @Column({type: 'varchar'})
+    @Exclude()
+    public salt: string;
+
+    constructor(partial: Partial<UserEntity>) {
+        super();
+        Object.assign(this, partial);
+    }
 }
