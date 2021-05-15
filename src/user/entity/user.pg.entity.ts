@@ -17,6 +17,9 @@ export class UserEntity extends BaseEntity {
     @Exclude()
     public password: string;
 
+    @Column({type: 'varchar', nullable: true})
+    public token: string;
+
     @Column({type: 'varchar'})
     @Exclude()
     public salt: string;
