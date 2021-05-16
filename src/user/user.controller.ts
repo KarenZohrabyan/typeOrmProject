@@ -1,10 +1,15 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, Post, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, ParseIntPipe, Post, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { Type } from "class-transformer";
 import { RegisterDto } from "./dto/register.dto";
 import { UserEntity } from "./entity/user.pg.entity";
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiTags} from '@nestjs/swagger'
 import { UserValidation } from "./dto/user.validate";
+import { AuthGuard } from "@nestjs/passport";
+import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
+import { Roles } from "src/utility/decorators/roles.decorator";
+import { Role } from "src/utility/enums/role.enum";
+import { RolesGuard } from "src/utility/guards/roles.guard";
 
 @Controller('users')
 @ApiTags('users')
@@ -35,6 +40,9 @@ export class UserController {
 
     @Get('/user/:id')
     @UseInterceptors(ClassSerializerInterceptor)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.admin)
+    @ApiBearerAuth()
     @UsePipes(new ValidationPipe({
         whitelist: true,
     }))

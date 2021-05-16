@@ -1,4 +1,5 @@
 import { Exclude } from "class-transformer";
+import { Role } from "src/utility/enums/role.enum";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({name: 'users'})
@@ -17,8 +18,11 @@ export class UserEntity extends BaseEntity {
     @Exclude()
     public password: string;
 
-    @Column({type: 'varchar', nullable: true})
+    @Column({type: 'varchar'})
     public token: string;
+
+    @Column({ type: 'varchar'})
+    public role: Role = Role.user;
 
     @Column({type: 'varchar'})
     @Exclude()

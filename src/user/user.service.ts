@@ -25,7 +25,7 @@ export class UserService {
         }
 
         const user = await this.userRepository.register(registerDto);
-        user.token = await this.authService.generateToken(email);
+        user.token = await this.authService.generateToken(email, ifUserExists.role);
         await user.save();
         return user;
     }
@@ -45,7 +45,7 @@ export class UserService {
             throw new BadRequestException('You entered wrong credentials!');
         }
 
-        const token = await this.authService.generateToken(email);
+        const token = await this.authService.generateToken(email, user.role);
         user.token = token;
         await user.save();
         return {token};

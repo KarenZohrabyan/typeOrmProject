@@ -8,10 +8,6 @@ import { AuthService } from "src/auth/auth.service";
 
 @EntityRepository(UserEntity) 
 export class UserRepository extends Repository<UserEntity> {
-    constructor(
-        private readonly authService: AuthService
-    ) { super()}
-
     public async register (registerDto: RegisterDto): Promise<UserEntity> {
         const { password } = registerDto;
 
@@ -20,7 +16,6 @@ export class UserRepository extends Repository<UserEntity> {
 
         const user = this.create(registerDto);
         user.salt = salt;
-        await user.save();
         return user;
     }
 
