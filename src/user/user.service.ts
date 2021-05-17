@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AuthService } from "src/auth/auth.service";
+import { Role } from "src/utility/enums/role.enum";
 import { RegisterDto } from "./dto/register.dto";
 import { UserValidation } from "./dto/user.validate";
 import { UserEntity } from "./entity/user.pg.entity";
@@ -25,7 +26,7 @@ export class UserService {
         }
 
         const user = await this.userRepository.register(registerDto);
-        user.token = await this.authService.generateToken(email, ifUserExists.role);
+        user.token = await this.authService.generateToken(email, Role.user);
         await user.save();
         return user;
     }

@@ -39,10 +39,10 @@ export class UserController {
     }
 
     @Get('/user/:id')
-    @UseInterceptors(ClassSerializerInterceptor)
+    @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.admin)
-    @ApiBearerAuth()
+    @UseInterceptors(ClassSerializerInterceptor)
     @UsePipes(new ValidationPipe({
         whitelist: true,
     }))

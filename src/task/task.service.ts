@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { UserEntity } from "src/user/entity/user.pg.entity";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { TaskEntity } from "./entities/task.pg.entity";
 import { TaskRepository } from "./repository/task.repository";
@@ -11,7 +12,7 @@ export class TaskService {
         private readonly taskRepository: TaskRepository
     ) {}
 
-    public async createTask(createTaskDto: CreateTaskDto): Promise<TaskEntity> {
-        return this.taskRepository.createTask(createTaskDto);
+    public async createTask(createTaskDto: CreateTaskDto, user: UserEntity): Promise<TaskEntity> {
+        return this.taskRepository.createTask(createTaskDto, user);
     }
 }

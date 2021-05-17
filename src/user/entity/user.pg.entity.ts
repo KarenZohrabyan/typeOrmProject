@@ -1,6 +1,7 @@
 import { Exclude } from "class-transformer";
+import { TaskEntity } from "src/task/entities/task.pg.entity";
 import { Role } from "src/utility/enums/role.enum";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({name: 'users'})
 @Unique(['email'])
@@ -27,6 +28,9 @@ export class UserEntity extends BaseEntity {
     @Column({type: 'varchar'})
     @Exclude()
     public salt: string;
+
+    @OneToMany((type) => TaskEntity, tasks => tasks.user, { eager: true })
+    tasks: TaskEntity[];
 
     constructor(partial: Partial<UserEntity>) {
         super();

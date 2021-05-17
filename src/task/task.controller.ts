@@ -1,5 +1,11 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Post, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
+import { User } from "src/auth/guards/user.decorator";
+import { UserEntity } from "src/user/entity/user.pg.entity";
+import { Roles } from "src/utility/decorators/roles.decorator";
+import { Role } from "src/utility/enums/role.enum";
+import { RolesGuard } from "src/utility/guards/roles.guard";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { TaskEntity } from "./entities/task.pg.entity";
 import { TaskService } from "./task.service";
@@ -12,10 +18,13 @@ export class TaskController {
     ) {}
 
     @Post('/task')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.user)
     @UsePipes(new ValidationPipe({
         whitelist: true
     }))
-    public async createTask(@Body(ValidationPipe) createTaskDto: CreateTaskDto): Promise<TaskEntity> {
-        return this.taskservice.createTask(createTaskDto);
+    public async createTask(@Body(ValidationPipe) createTaskDto: CreateTaskDto, @User() user: UserEntity): Promise<TaskEntity> {
+        return this.taskservice.createTask(createTaskDto, user);
     }
 }

@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { UserEntity } from "src/user/entity/user.pg.entity";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'tasks'})
 export class TaskEntity extends BaseEntity {
@@ -6,5 +7,8 @@ export class TaskEntity extends BaseEntity {
     public id: number;
 
     @Column({type: 'varchar'})
-    public name: string
+    public name: string;
+
+    @ManyToOne(() => UserEntity, user => user.tasks, { eager: false})
+    user: UserEntity;
 }

@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { TaskEntity } from "./entities/task.pg.entity";
 import { TaskRepository } from "./repository/task.repository";
 import { TaskController } from "./task.controller";
 import { TaskService } from "./task.service";
