@@ -15,4 +15,8 @@ export class TaskService {
     public async createTask(createTaskDto: CreateTaskDto, user: UserEntity): Promise<TaskEntity> {
         return this.taskRepository.createTask(createTaskDto, user);
     }
+
+    public async getUserTasks(user: UserEntity): Promise<TaskEntity[]> {
+        return this.taskRepository.getUserTasks(user);
+    }
 }

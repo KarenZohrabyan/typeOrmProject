@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Get, Post, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
 import { User } from "src/auth/guards/user.decorator";
@@ -21,10 +21,19 @@ export class TaskController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(Role.user)
+    @UseInterceptors(ClassSerializerInterceptor)
     @UsePipes(new ValidationPipe({
         whitelist: true
     }))
     public async createTask(@Body(ValidationPipe) createTaskDto: CreateTaskDto, @User() user: UserEntity): Promise<TaskEntity> {
         return this.taskservice.createTask(createTaskDto, user);
+    }
+
+    @Get('/getUserTasks')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.user)
+    public async getUserTasks(@User() user: UserEntity): Promise<TaskEntity[]> {
+        return this.taskservice.getUserTasks(user);
     }
 }
