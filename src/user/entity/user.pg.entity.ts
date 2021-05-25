@@ -30,6 +30,7 @@ export class UserEntity extends BaseEntity {
     public salt: string;
 
     @OneToMany(() => TaskEntity, tasks => tasks.user, { eager: true, cascade: true })
+    @Exclude()
     tasks: TaskEntity[];
 
     constructor(partial: Partial<UserEntity>) {

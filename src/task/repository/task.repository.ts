@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException } from "@nestjs/common";
 import { UserEntity } from "src/user/entity/user.pg.entity";
+import { Role } from "src/utility/enums/role.enum";
 import { EntityRepository, Repository } from "typeorm";
 import { CreateTaskDto } from "../dto/create-task.dto";
 import { TaskEntity } from "../entities/task.pg.entity";
@@ -7,13 +8,19 @@ import { TaskEntity } from "../entities/task.pg.entity";
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
     public async createTask(createTaskDto: CreateTaskDto, user: UserEntity): Promise<TaskEntity> {
-        const { name } = createTaskDto;
-        const IfTaskExists = await this.findOne({name});
+        const userTasks: TaskEntity[] = await this.createQueryBuilder('tasks')
+            .leftJoin('tasks.user', 'user')
+            .select([
+                'tasks.name'
+            ])
+            .where('user.id = :userId', { userId: user.id })
+            .getMany();
 
-        if(IfTaskExists) {
-            throw new ConflictException(`Username with "${name}" already exists`);
+        const ifTaskExists: TaskEntity[] = userTasks.filter((item) => item.name === createTaskDto.name);
+        if(ifTaskExists.length !== 0) {
+            throw new ConflictException(`Task with "${createTaskDto.name}" already exists`);
         }
-        const task = this.create(createTaskDto);
+        const task: TaskEntity = this.create(createTaskDto);
         task.user = user;
         await task.save();
         return task;
@@ -27,12 +34,11 @@ export class TaskRepository extends Repository<TaskEntity> {
         const query = this.createQueryBuilder('tasks')
             .leftJoin('tasks.user', 'user')
             .select([
-                'tasks.name', 'tasks.id',
-                'user.name', 'user.email'
+                'tasks.name', 'tasks.id'
             ])
             .where('user.id = :userId', {userId: user.id})
-        
-        const result = await query.getMany();
+
+        const result: TaskEntity[] = await query.getMany();
         return result;
     }
 }
