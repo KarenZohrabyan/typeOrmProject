@@ -8,5 +8,13 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: '11111',
   database: 'pharmacy',
   entities: ["dist/**/*.entity{.ts,.js}"],
-  synchronize: true
+  // synchronize: true,
+  synchronize: false,
+  migrationsTableName: 'gagoi_mot',
+  migrations: [
+      'dist/src/db/migrations/*js',
+  ],
+  cli: {
+      migrationsDir: 'src/migrations'
+  }
 }
