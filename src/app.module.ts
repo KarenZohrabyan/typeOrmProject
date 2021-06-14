@@ -13,7 +13,9 @@ import { TaskModule } from './task/task.module';
     AuthModule,
     TaskModule,
     TypeOrmModule.forRoot(typeOrmConfig),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot(
+      {envFilePath: '.env'}
+    ),
   ]
 })
 export class AppModule {}
