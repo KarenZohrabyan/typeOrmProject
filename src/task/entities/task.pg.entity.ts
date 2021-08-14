@@ -11,6 +11,12 @@ export class TaskEntity extends BaseEntity {
     @Column({type: 'varchar'})
     public name: string;
 
+    @Column({type: 'varchar'})
+    public state: string;
+
+    @Column("int", {array: true })
+    public orders: number[];
+
     @ManyToOne(() => UserEntity, user => user.tasks, { eager: false, onDelete: "CASCADE" })
     @Exclude()
     user: UserEntity;

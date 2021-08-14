@@ -19,4 +19,8 @@ export class TaskService {
     public async getUserTasks(user: UserEntity): Promise<TaskEntity[]> {
         return this.taskRepository.getUserTasks(user);
     }
+
+    public async getSelectedTasks(user: UserEntity): Promise<TaskEntity[]> {
+        return this.taskRepository.getSelectedTasks(user);
+    }
 }
