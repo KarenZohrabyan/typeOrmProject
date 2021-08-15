@@ -8,16 +8,16 @@ import { TaskEntity } from "../entities/task.pg.entity";
 @EntityRepository(TaskEntity)
 export class TaskRepository extends Repository<TaskEntity> {
     public async createTask(createTaskDto: CreateTaskDto, user: UserEntity): Promise<TaskEntity> {
-        const userTasks: TaskEntity[] = await this.createQueryBuilder('tasks')
-            .leftJoin('tasks.user', 'user')
+        const userTasks: TaskEntity = await this.createQueryBuilder('task')
+            .leftJoin('task.user', 'user')
             .select([
-                'tasks.name'
+                'task.name'
             ])
             .where('user.id = :userId', { userId: user.id })
-            .getMany();
+            .andWhere('task.name = :name', { name: createTaskDto.name })
+            .getOne();
 
-        const ifTaskExists: TaskEntity[] = userTasks.filter((item) => item.name === createTaskDto.name);
-        if(ifTaskExists.length !== 0) {
+        if(userTasks) {
             throw new ConflictException(`Task with "${createTaskDto.name}" already exists`);
         }
         const task: TaskEntity = this.create(createTaskDto);
@@ -31,15 +31,13 @@ export class TaskRepository extends Repository<TaskEntity> {
             throw new BadRequestException('There is no user: 400 error!!!');
         }
 
-        const query = this.createQueryBuilder('tasks')
+        return await this.createQueryBuilder('tasks')
             .leftJoin('tasks.user', 'user')
             .select([
                 'tasks.name', 'tasks.id', 'tasks.state', 'tasks.orders'
             ])
             .where('user.id = :userId', {userId: user.id})
-
-        const result: TaskEntity[] = await query.getMany();
-        return result;
+            .getMany();
     }
 
     public async getSelectedTasks(user: UserEntity): Promise<TaskEntity[]> {

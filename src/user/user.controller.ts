@@ -10,6 +10,8 @@ import { JwtAuthGuard } from "src/auth/guards/jwt.auth.guard";
 import { Roles } from "src/utility/decorators/roles.decorator";
 import { Role } from "src/utility/enums/role.enum";
 import { RolesGuard } from "src/utility/guards/roles.guard";
+import { User } from "src/auth/guards/user.decorator";
+import { UpdateUser } from "./dto/update.dto";
 
 @Controller('users')
 @ApiTags('users')
@@ -48,5 +50,17 @@ export class UserController {
     }))
     public async findUserById(@Param('id' ,ParseIntPipe) id: number): Promise<UserEntity> {
         return this.userService.findUserById(id);
+    }
+
+    @Post('/updateUser')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
+    @UsePipes(new ValidationPipe({
+        // whitelist: true,
+        transform: true
+    }))
+    public async  updateUser(@Body() updateUser: UpdateUser, @User() user: UserEntity): Promise<UserEntity> {
+        return this.userService.updateUser(user, updateUser);
     }
 }
