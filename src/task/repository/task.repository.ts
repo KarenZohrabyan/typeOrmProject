@@ -45,23 +45,25 @@ export class TaskRepository extends Repository<TaskEntity> {
             throw new BadRequestException('There is no user: 400 error!!!');
         }
 
-        // return await this.createQueryBuilder('tasks')
-        //     .leftJoin('tasks.user', 'user')
-        //     .select([
-        //         'tasks.name', 'tasks.id', 'tasks.state'
-        //     ])
-        //     .where('user.id = :userId', {userId: user.id})
-        //     .andWhere('tasks.state = :publish', {publish: 'publish'})
-        //     .orWhere('tasks.state = :unpublish', { unpublish: "unpublish"})
-        //     .orderBy('tasks.id', 'ASC')
-        //     .getMany();
-
         return await this.createQueryBuilder('tasks')
             .leftJoin('tasks.user', 'user')
+            .select([
+                'tasks.name', 'tasks.id', 'tasks.state', 
+            ])
             .where('user.id = :userId', {userId: user.id})
-            .select("SUM(tasks.id)", "Sum of id's")
-            .getRawMany()
+            .andWhere('tasks.state = :published', {published: 'published'})
+            .orWhere('tasks.state = :flan', { flan: "flan"})
+            .orderBy('tasks.id', 'ASC')
+            .getMany();
 
+        // return await this.createQueryBuilder('tasks')
+        //     .leftJoin('tasks.user', 'user')
+        //     .where('user.id = :userId', {userId: user.id})
+        //     .select(["SUM(tasks.id) as sum", "COUNT(tasks.id) as count", "AVG(tasks.id) as average", "user.email as email"])
+        //     .groupBy("user.email")
+        //     .getRawOne()
+
+        
         // return await this.createQueryBuilder('tasks')
         //     .leftJoin('tasks.user', 'user')
         //     .where('user.id = :userId', {userId: user.id})
