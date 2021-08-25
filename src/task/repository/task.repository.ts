@@ -55,7 +55,9 @@ export class TaskRepository extends Repository<TaskEntity> {
             .orWhere('tasks.state = :flan', { flan: "flan"})
             .orderBy('tasks.id', 'ASC')
             .getMany();
+    }
 
+    public async getPaginatedTasks(user: UserEntity) {
         // return await this.createQueryBuilder('tasks')
         //     .leftJoin('tasks.user', 'user')
         //     .where('user.id = :userId', {userId: user.id})
@@ -67,10 +69,22 @@ export class TaskRepository extends Repository<TaskEntity> {
         // return await this.createQueryBuilder('tasks')
         //     .leftJoin('tasks.user', 'user')
         //     .where('user.id = :userId', {userId: user.id})
-        //     .select(['user.id AS id'])
-        //     .addSelect(['AVG(tasks.orders) AS total_usage'])
-        //     .getRawMany()
+        //     .select(['user.id AS id', 'count(tasks.orders) AS total_usage'])
+        //     .groupBy('user.id')
+        //     .getRawOne()
 
-        // return await this.find({select: ["orders"]});
+        // return await this.findOne({
+        //     where: {
+        //         id: 1,
+        //     },
+        //     select: ["orders"],
+        // });
+
+        return await this.createQueryBuilder("tasks")
+            .leftJoin("tasks.user", "user")
+            .where("user.id = :userId", {userId: user.id})
+            .skip(3)
+            .take(2)
+            .getMany();
     }
 }

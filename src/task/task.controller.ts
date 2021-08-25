@@ -44,4 +44,12 @@ export class TaskController {
     public async getSelectedTasks(@User() user: UserEntity): Promise<TaskEntity[]> {
         return this.taskservice.getSelectedTasks(user);
     }
+
+    @Get('/getPaginatedTasks')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.user)
+    public async getPaginatedTasks(@User() user: UserEntity) {
+        return this.taskservice.getPaginatedTasks(user);
+    }
 }

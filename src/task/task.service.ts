@@ -23,4 +23,8 @@ export class TaskService {
     public async getSelectedTasks(user: UserEntity): Promise<TaskEntity[]> {
         return this.taskRepository.getSelectedTasks(user);
     }
+
+    public async getPaginatedTasks(user: UserEntity) {
+        return this.taskRepository.getPaginatedTasks(user);
+    }
 }
