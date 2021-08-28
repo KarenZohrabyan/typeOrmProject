@@ -83,7 +83,7 @@ export class TaskRepository extends Repository<TaskEntity> {
         return await this.createQueryBuilder("tasks")
             .leftJoin("tasks.user", "user")
             .where("user.id = :userId", {userId: user.id})
-            .skip(3)
+            // .skip(3)
             .take(2)
             .getMany();
     }
